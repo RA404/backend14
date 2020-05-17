@@ -1,4 +1,5 @@
 const userModel = require('../models/users');
+const bcryptjs = require('bcryptjs');
 
 module.exports.findAll = (req, res) => {
   userModel.find({})
@@ -13,8 +14,9 @@ module.exports.findUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  userModel.create({ name, about, avatar })
+  const { name, about, avatar, email, password } = req.body;
+  bcryptjs.hash(password, 10)
+    .then(hash => userModel.create({ name, about, avatar, email, password: hash }))
     .then((user) => res.send({ data: user }))
     .catch((err) => ((err.name === 'ValidationError') ? res.status(400).send({ message: 'Avatar link validation error' }) : res.status(500).send({ message: 'Failed to create user' })));
 };
