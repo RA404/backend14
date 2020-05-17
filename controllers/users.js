@@ -1,5 +1,6 @@
 const userModel = require('../models/users');
 const bcryptjs = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 module.exports.findAll = (req, res) => {
   userModel.find({})
@@ -18,5 +19,17 @@ module.exports.createUser = (req, res) => {
   bcryptjs.hash(password, 10)
     .then(hash => userModel.create({ name, about, avatar, email, password: hash }))
     .then((user) => res.send({ data: user }))
-    .catch((err) => ((err.name === 'ValidationError') ? res.status(400).send({ message: 'Avatar link validation error' }) : res.status(500).send({ message: 'Failed to create user' })));
+    .catch((err) => ((err.name === 'ValidationError') ? res.status(400).send({ message: 'Validation error' }) : res.status(500).send({ message: 'Failed to create user' })));
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  return findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.send({ token });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    })
 };
