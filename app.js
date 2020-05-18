@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const { PORT, DATABASE_URL } = require('./config.js');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
+const auth = require('./middlewares/auth')
 
 const app = express();
 
@@ -14,16 +15,11 @@ mongoose.connect(DATABASE_URL, {
   useUnifiedTopology: true,
 });
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5ec0df550fb7b41760fa0812',
-  };
-
-  next();
-});
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.post('/signup', createUser);
+app.post('/signin', login);
+app.use(auth);
 app.use('/users', users);
 app.use('/cards', cards);
 app.use((req, res) => {
