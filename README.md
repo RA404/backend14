@@ -2,24 +2,28 @@
 Разработка бэкенда для проекта (Mesto)
 
 # description
-Подключение к базе данных MongoDB
+Разработка авторизации пользователя
 
 # API 
 * запрос GET /users возвращает всех пользователей из базы
 * запрос GET /users/:userId возвращает конкретного пользователя
-* запрос POST /users создаёт пользователя
+* запрос POST /signup создаёт пользователя (необходимо передать логин и пароль)
+* запрос POST /signin осуществляет авторизацию пользователя
 * запрос GET /cards возвращает все карточки всех пользователей
 * запрос POST /cards создаёт карточку
 * запрос DELETE /cards/:cardsId удаляет карточку
 
 ## How to install
 1. Склонировать проект
-* git clone git@github.com:RA404/backend13.git
+* git clone git@github.com:RA404/backend14.git
 2. Установите экпресс и пакеты
 * npm init -y
 * npm install express
 * npm i body-parser
 * npm install validator
+* npm install bcryptjs
+* npm install jsonwebtoken
+* npm install cookie-parser
 3. Установить зависимости для разработчика
 * npm install nodemon -D
 * npm install eslint --save-dev   
@@ -38,7 +42,7 @@
 * Из папки с проектом запустить команду npm run start
 
 # Project link 
-[https://github.com/RA404/backend13](https://github.com/RA404/backend13)
+[https://github.com/RA404/backend14](https://github.com/RA404/backend14)
 
 ## Version v0.0.1
 v0.0.1 - первая версия проекта
