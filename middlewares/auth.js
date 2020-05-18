@@ -1,22 +1,31 @@
+const userModel = require('../models/users');
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config');
 
-module.exports = (req, res, next) =>  {
-  const { authorization } = req.headers;
 
-  if (!authorization|| !authorization.startsWith('Bearer ')){
-    req.status(401).send({ message: 'Sign in to your account'});
-  }
+const verifyToken = (token) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, JWT_SECRET, (err, data) => {
+      if (err){
+        reject(err);
+      }
+      resolve(data);
+    })
+  })
+}
 
-  const token = authorization.replace('Bearer ', '');
-
-  let payload;
+module.exports.auth = async (req, res, next) =>  {
   try{
-    payload = jwt.verify(token, 'some-secret-key');
-  }catch(err){
-    req.status(401).send({ message: 'Sign in to your account'});
+    const data = await verifyToken(req.cookies.jwt);
+    const user = await userModel.findById(data._id);
+    if (!user){
+      return res.status(401).send({ message: 'Sign in to your account'});  
+    }
+    req.user = user;
+    next();
+  }
+  catch(err){
+    return res.status(401).send({ message: 'Sign in to your account'});
   }
 
-  req.user = payload;
-
-  next();
 }
