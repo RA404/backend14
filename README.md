@@ -24,6 +24,7 @@
 * npm install bcryptjs
 * npm install jsonwebtoken
 * npm install cookie-parser
+* npm install --save joi
 3. Установить зависимости для разработчика
 * npm install nodemon -D
 * npm install eslint --save-dev   
