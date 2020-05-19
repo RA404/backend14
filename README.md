@@ -25,6 +25,7 @@
 * npm install jsonwebtoken
 * npm install cookie-parser
 * npm install --save joi
+* npm install --save helmet
 3. Установить зависимости для разработчика
 * npm install nodemon -D
 * npm install eslint --save-dev   
