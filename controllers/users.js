@@ -1,7 +1,7 @@
-const userModel = require('../models/users');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config');
+const userModel = require('../models/users');
 
 module.exports.findAll = (req, res) => {
   userModel.find({})
@@ -16,9 +16,22 @@ module.exports.findUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
+
   bcryptjs.hash(password, 10)
-    .then(hash => userModel.create({ name, about, avatar, email, password: hash }))
+    .then((hash) => userModel.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
     .then((user) => res.send({ data: user }))
     .catch((err) => ((err.name === 'ValidationError') ? res.status(400).send({ message: 'Validation error' }) : res.status(500).send({ message: 'Failed to create user' })));
 };
@@ -36,5 +49,5 @@ module.exports.login = (req, res) => {
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });
-    })
+    });
 };

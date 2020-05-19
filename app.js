@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const auth = require('./middlewares/auth');
 const { PORT, DATABASE_URL } = require('./config.js');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
