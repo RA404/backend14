@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 const { PORT, DATABASE_URL } = require('./config.js');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
@@ -14,14 +16,8 @@ mongoose.connect(DATABASE_URL, {
   useUnifiedTopology: true,
 });
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5eb3ad2e77a29909841d030b',
-  };
-
-  next();
-});
-
+app.use(helmet());
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/users', users);
