@@ -22,8 +22,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/users', users);
 app.use('/cards', cards);
-app.use((req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).send(statusCode === 500 ? { message: 'Internal Server Error' } : message);
 });
 
 app.listen(PORT, () => {

@@ -2,20 +2,26 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config');
 const userModel = require('../models/users');
+const ErrorNotFound = require('../errors/ErrorNotFound');
 
-module.exports.findAll = (req, res) => {
+module.exports.findAll = (req, res, next) => {
   userModel.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Failed to get users' }));
+    .catch(next);
 };
 
-module.exports.findUser = (req, res) => {
+module.exports.findUser = (req, res, next) => {
   userModel.findById({ _id: req.params.id })
-    .then((user) => ((user) ? res.send({ data: user }) : res.status(404).send({ message: `User with id '${req.params.id}' not found` })))
-    .catch(() => res.status(500).send({ message: 'Failed to get user' }));
+    .then((user) => {
+      if (!user) {
+        throw new ErrorNotFound({ message: `User with id '${req.params.id}' not found` });
+      }
+      res.send({ data: user });
+    })
+    .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name,
     about,
@@ -33,10 +39,10 @@ module.exports.createUser = (req, res) => {
       password: hash,
     }))
     .then((user) => res.send({ data: user }))
-    .catch((err) => ((err.name === 'ValidationError') ? res.status(400).send({ message: 'Validation error' }) : res.status(500).send({ message: 'Failed to create user' })));
+    .catch(next);
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return userModel.findUserByCredentials(email, password)
     .then((user) => {
@@ -47,7 +53,5 @@ module.exports.login = (req, res) => {
         sameSite: true,
       }).send({ token }).end();
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+    .catch(next);
 };

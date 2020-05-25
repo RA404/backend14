@@ -14,7 +14,7 @@ const schemaSignUp = require('../schemas/signUp');
 const validate = (schemaSignUp) => (req, res, next) => {
   joi.validate(req.body, schemaSignUp)
     .then(() => next())
-    .catch((err) => res.status(400).send({ message: err.message }));
+    .catch(next);
 };
 
 userRouter.get('/', auth.auth, findAll);
