@@ -19,6 +19,11 @@ const validate = (schemaSignUp) => (req, res, next) => {
 
 userRouter.get('/', auth.auth, findAll);
 userRouter.get('/:id', auth.auth, findUser);
+userRouter.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server is crashing now');
+  }, 0);
+});
 userRouter.post('/signup', validate(schemaSignUp), createUser);
 userRouter.post('/signin', login);
 
