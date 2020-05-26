@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { PORT, DATABASE_URL } = require('./config.js');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
@@ -16,12 +17,17 @@ mongoose.connect(DATABASE_URL, {
   useUnifiedTopology: true,
 });
 
+app.use(requestLogger);
+
 app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/users', users);
 app.use('/cards', cards);
+
+app.use(errorLogger);
+
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
