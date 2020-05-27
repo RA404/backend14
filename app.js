@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { PORT, DATABASE_URL } = require('./config.js');
 const users = require('./routes/users');
@@ -29,11 +30,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/signin', signin);
 app.use('/signup', signup);
+app.use(auth.auth);
 app.use('/crash-test', crash);
 app.use('/users', users);
 app.use('/cards', cards);
 
 app.use(errorLogger);
+
+app.use((req, res) => {
+  res.status(404).send({ message: 'The requested resource is not found' });
+});
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
