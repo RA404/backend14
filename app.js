@@ -8,6 +8,9 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { PORT, DATABASE_URL } = require('./config.js');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
+const signup = require('./routes/signup');
+const signin = require('./routes/signin');
+const crash = require('./routes/crash');
 
 const app = express();
 
@@ -24,6 +27,9 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/signin', signin);
+app.use('/signup', signup);
+app.use('/crash-test', crash);
 app.use('/users', users);
 app.use('/cards', cards);
 
