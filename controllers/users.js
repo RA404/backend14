@@ -12,12 +12,8 @@ module.exports.findAll = (req, res, next) => {
 
 module.exports.findUser = (req, res, next) => {
   userModel.findById({ _id: req.params.id })
-    .then((user) => {
-      if (!user) {
-        throw new ErrorNotFound({ message: `User with id '${req.params.id}' not found` });
-      }
-      res.send({ data: user });
-    })
+    .orFail(() => new ErrorNotFound({ message: `User with id '${req.params.id}' not found` }))
+    .then((user) => res.send({ data: user }))
     .catch(next);
 };
 
