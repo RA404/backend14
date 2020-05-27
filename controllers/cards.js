@@ -1,5 +1,6 @@
 const cardModel = require('../models/cards');
 const ErrorNotFound = require('../errors/ErrorNotFound');
+// const ErrorForbidden = require('../errors/ErrorForbidden');
 
 module.exports.findAll = (req, res, next) => {
   cardModel.find({})
@@ -8,13 +9,12 @@ module.exports.findAll = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  cardModel.findByIdAndRemove({ _id: req.params.id })
-    .then((card) => {
-      if (!card) {
-        throw new ErrorNotFound({ message: `Card with id '${req.params.id}' not found` });
-      }
-      res.send({ data: card });
-    })
+  cardModel.findOneAndDelete({
+    _id: req.params.id,
+    owner: req.user._id,
+  })
+    .orFail(() => new ErrorNotFound({ message: `Card with id '${req.params.id}' not found or you haven't permissions to delete this card` }))
+    .then(() => res.send({ message: 'Сard deleted successfully' }))
     .catch(next);
 };
 
